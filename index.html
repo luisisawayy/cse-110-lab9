@@ -6,7 +6,6 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lab 9</title>
-
   <style>
     button {
       margin: 3px;
@@ -47,6 +46,13 @@
       width: 122px;
     }
   </style>
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+  window.TrackJS && TrackJS.install({ 
+    token: "2394bc3f9af541929230f084947a5060"
+    // for more configuration options, see https://docs.trackjs.com
+  });
+  </script>
 </head>
 
 <body>
@@ -69,21 +75,21 @@
     </form>
 
     <section id="error-btns">
-      <button>Console Log</button>
-      <button>Console Error</button>
-      <button>Console Count</button>
-      <button>Console Warn</button>
-      <button>Console Assert</button>
-      <button>Console Clear</button>
-      <button>Console Dir</button>
-      <button>Console dirxml</button>
-      <button>Console Group Start</button>
-      <button>Console Group End</button>
-      <button>Console Table</button>
-      <button>Start Timer</button>
-      <button>End Timer</button>
-      <button>Console Trace</button>
-      <button>Trigger a Global Error</button>
+      <button id="log">Console Log</button>
+      <button id="error">Console Error</button>
+      <button id="count">Console Count</button>
+      <button id="warn">Console Warn</button>
+      <button id="assert">Console Assert</button>
+      <button id="clear">Console Clear</button>
+      <button id="dir">Console Dir</button>
+      <button id="dirxml">Console dirxml</button>
+      <button id="group">Console Group Start</button>
+      <button id="groupEnd">Console Group End</button>
+      <button id="table">Console Table</button>
+      <button id="startTimer">Start Timer</button>
+      <button id="endTimer">End Timer</button>
+      <button id="trace">Console Trace</button>
+      <button id="globalError">Trigger a Global Error</button>
     </section>
   </main>
 
@@ -95,13 +101,78 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+
+      try {
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      } catch (err) {
+        output.innerHTML = 'Error in calculation';
+        console.error("Caught error in calculation:", err);
+      } finally {
+        console.log("Calculation attempt complete.");
+      }
     });
 
-    let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
+    class CustomError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = "CustomError";
+      }
+    }
 
-    // Start your code here
-    // You may move this JS to another file if you wish
+    let counter = 0;
+    document.querySelector('#log').addEventListener('click', () => {
+      console.log("Console Log Demo", { value: 42 });
+    });
+    document.querySelector('#error').addEventListener('click', () => {
+      console.error("Console Error Demo");
+    });
+    document.querySelector('#count').addEventListener('click', () => {
+      console.count("Count Button Pressed");
+    });
+    document.querySelector('#warn').addEventListener('click', () => {
+      console.warn("Console Warn Demo");
+    });
+    document.querySelector('#assert').addEventListener('click', () => {
+      console.assert(false, "Console Assert Demo failed condition");
+    });
+    document.querySelector('#clear').addEventListener('click', () => {
+      console.clear();
+    });
+    document.querySelector('#dir').addEventListener('click', () => {
+      console.dir(document.body);
+    });
+    document.querySelector('#dirxml').addEventListener('click', () => {
+      console.dirxml(document);
+    });
+    document.querySelector('#group').addEventListener('click', () => {
+      console.group("Grouped Logs");
+      console.log("Inside group");
+      console.warn("Still inside group");
+    });
+    document.querySelector('#groupEnd').addEventListener('click', () => {
+      console.groupEnd();
+    });
+    document.querySelector('#table').addEventListener('click', () => {
+      console.table([{ a: 1, b: 'Y' }, { a: 2, b: 'Z' }]);
+    });
+    document.querySelector('#startTimer').addEventListener('click', () => {
+      console.time("Timer");
+    });
+    document.querySelector('#endTimer').addEventListener('click', () => {
+      console.timeEnd("Timer");
+    });
+    document.querySelector('#trace').addEventListener('click', () => {
+      console.trace("Trace Button Pressed");
+    });
+    document.querySelector('#globalError').addEventListener('click', () => {
+      
+      nonexistentFunction();
+    });
+
+    window.onerror = function (msg, url, lineNo, columnNo, error) {
+      console.log("Caught a global error:", msg);
+      return true; 
+    };
   </script>
 </body>
 
